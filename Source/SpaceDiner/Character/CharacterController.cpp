@@ -1,13 +1,11 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "CharacterController.h"
+﻿#include "CharacterController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 
-FVector ACharacterController::MoveToMouseClick()
+FVector ACharacterController::HandleMouseLeftClick()
 {
+	//TODO: move all of this logic to AMainCharacter
 	bool Hit;
-	const FVector Destination = GetLocationUnderCursor(Hit);
+	const FVector Destination = GetActorUnderCursor(Hit).Location;
 	if(Hit)
 	{
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, Destination);
@@ -15,9 +13,9 @@ FVector ACharacterController::MoveToMouseClick()
 	return Destination;
 }
 
-FVector ACharacterController::GetLocationUnderCursor(bool& Hit) const
+FHitResult ACharacterController::GetActorUnderCursor(bool& Hit)
 {
-	FHitResult HitResult;
-	Hit = GetHitResultUnderCursorByChannel(TraceTypeQuery1, true, HitResult);
-	return HitResult.Location;
+	Hit = GetHitResultUnderCursorByChannel(TraceTypeQuery1, true, cachedMouseHit);
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *cachedMouseHit.GetActor()->GetActorLabel());
+	return cachedMouseHit;
 }
